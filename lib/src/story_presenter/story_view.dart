@@ -489,22 +489,22 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
             ),
           ),
         },
-        if (currentItem.storyItemType.isWeb) ...{
-          Positioned.fill(
-            child: WebStoryView(
-              storyItem: currentItem,
-              key: ValueKey('$currentIndex'),
-              onWebViewLoaded: (controller, loaded) {
-                isCurrentItemLoaded = loaded;
-                if (loaded) {
-                  _startStoryCountdown();
-                }
-                currentItem.webConfig?.onWebViewLoaded
-                    ?.call(controller, loaded);
-              },
-            ),
-          ),
-        },
+        // if (currentItem.storyItemType.isWeb) ...{
+        //   Positioned.fill(
+        //     child: WebStoryView(
+        //       storyItem: currentItem,
+        //       key: ValueKey('$currentIndex'),
+        //       onWebViewLoaded: (controller, loaded) {
+        //         isCurrentItemLoaded = loaded;
+        //         if (loaded) {
+        //           _startStoryCountdown();
+        //         }
+        //         currentItem.webConfig?.onWebViewLoaded
+        //             ?.call(controller, loaded);
+        //       },
+        //     ),
+        //   ),
+        // },
         if (currentItem.storyItemType.isText) ...{
           Positioned.fill(
             child: TextStoryView(
@@ -584,15 +584,28 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: SizedBox(
+          child: Container(
+            // color: Colors.amber,
             width: size.width,
             height: size.height,
             child: GestureDetector(
               key: ValueKey('$currentIndex'),
-              onLongPressDown: (details) => _pauseMedia(),
-              onLongPressUp: _resumeMedia,
-              onLongPressEnd: (details) => _resumeMedia(),
-              onLongPressCancel: _resumeMedia,
+              onLongPressDown: (details) {
+                log('onLongPressDown');
+                _pauseMedia();
+              },
+              onLongPressUp: () {
+                log('onLongPressUp');
+                _resumeMedia();
+              },
+              onLongPressEnd: (details) {
+                log('onLongPressEnd');
+                _resumeMedia();
+              },
+              onLongPressCancel: () {
+                log('onLongPressCancel');
+                _resumeMedia();
+              },
               onVerticalDragStart: widget.onSlideStart?.call,
               onVerticalDragUpdate: widget.onSlideDown?.call,
             ),
