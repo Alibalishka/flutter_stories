@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,13 +60,32 @@ class _HomeState extends State<Home> {
           storyItemSource: StoryItemSource.network,
           url:
               'https://minio.daladev.kz/tenant-sandyq/news/01JK5TRAMK21XZ476FZBGB8TV2.mp4',
-          videoConfig: const StoryViewVideoConfig(
-            fit: BoxFit.cover,
-            safeAreaTop: true,
-            loadingWidget: Center(
-              child: CupertinoActivityIndicator(),
-            ),
-          ),
+          videoConfig: StoryViewVideoConfig(
+              fit: BoxFit.cover,
+              useVideoAspectRatio: false,
+              safeAreaTop: true,
+              // padding: const EdgeInsets.only(top: 200),
+              loadingWidget: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          'https://minio.daladev.kz/tenant-sandyq/news/01JKB16TJ4TSTCEHRAMD80NZP6.png',
+                      fit: BoxFit.cover,
+                      // placeholder: (context, url) => Shimmer.fromColors(
+                      //   baseColor: AppComponents.shimmerBase,
+                      //   highlightColor: AppComponents.shimmerHighlight,
+                      //   child: Container(color: Colors.white),
+                      // ),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                    ),
+                  ),
+                  const Center(
+                    child: CupertinoActivityIndicator(),
+                  )
+                ],
+              )),
         ),
         StoryItem(
             storyItemType: StoryItemType.video,
@@ -73,6 +93,7 @@ class _HomeState extends State<Home> {
                 'https://minio.daladev.kz/tenant-sandyq/news/01JK5TYJSXY67FSYYQM0B6V8ES.mp4',
             videoConfig: const StoryViewVideoConfig(
               fit: BoxFit.cover,
+              useVideoAspectRatio: false,
               safeAreaTop: true,
               loadingWidget: Center(child: CupertinoActivityIndicator()),
             )),
@@ -193,6 +214,7 @@ class _MyStoryViewState extends State<MyStoryView> {
   @override
   void initState() {
     controller = FlutterStoryController();
+
     super.initState();
   }
 
@@ -215,20 +237,20 @@ class _MyStoryViewState extends State<MyStoryView> {
     return FlutterStoryPresenter(
       flutterStoryController: controller,
       items: widget.storyModel.stories,
-      // footerWidget: MessageBoxView(controller: controller),
-      storyViewIndicatorConfig: storyViewIndicatorConfig,
       initialIndex: 0,
-      // headerWidget: ProfileView(storyModel: widget.storyModel),
-      onStoryChanged: (p0) {},
+      storyViewIndicatorConfig: storyViewIndicatorConfig,
+      onStoryChanged: (index) {},
       onPreviousCompleted: () async {
         await widget.pageController.previousPage(
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.decelerate);
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
       },
       onCompleted: () async {
         await widget.pageController.nextPage(
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.decelerate);
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
         controller = FlutterStoryController();
       },
     );

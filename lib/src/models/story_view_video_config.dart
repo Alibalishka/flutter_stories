@@ -15,6 +15,7 @@ class StoryViewVideoConfig {
     this.safeAreaBottom = false,
     this.safeAreaLeft = false,
     this.safeAreaRight = true,
+    this.padding = EdgeInsets.zero,
   });
 
   /// Height for the Video
@@ -44,4 +45,7 @@ class StoryViewVideoConfig {
   final bool safeAreaBottom;
   final bool safeAreaLeft;
   final bool safeAreaRight;
+
+  /// Padding for the video
+  final EdgeInsets padding;
 }
