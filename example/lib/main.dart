@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -44,18 +45,6 @@ class _HomeState extends State<Home> {
     StoryModel(
       stories: [
         StoryItem(
-          storyItemType: StoryItemType.image,
-          storyItemSource: StoryItemSource.network,
-          url:
-              "https://minio.daladev.kz/tenant-sandyq/news/01JJXSFTWMN2WEVBDMW5KVV39F.webp",
-          imageConfig: StoryViewImageConfig(
-            fit: BoxFit.cover,
-            progressIndicatorBuilder: (p0, p1, p2) => const Center(
-              child: CupertinoActivityIndicator(),
-            ),
-          ),
-        ),
-        StoryItem(
           storyItemType: StoryItemType.video,
           storyItemSource: StoryItemSource.network,
           url:
@@ -88,6 +77,18 @@ class _HomeState extends State<Home> {
               )),
         ),
         StoryItem(
+          storyItemType: StoryItemType.image,
+          storyItemSource: StoryItemSource.network,
+          url:
+              "https://minio.daladev.kz/tenant-sandyq/news/01JJXSFTWMN2WEVBDMW5KVV39F.webp",
+          imageConfig: StoryViewImageConfig(
+            fit: BoxFit.cover,
+            progressIndicatorBuilder: (p0, p1, p2) => const Center(
+              child: CupertinoActivityIndicator(),
+            ),
+          ),
+        ),
+        StoryItem(
             storyItemType: StoryItemType.video,
             url:
                 'https://minio.daladev.kz/tenant-sandyq/news/01JK5TYJSXY67FSYYQM0B6V8ES.mp4',
@@ -99,36 +100,36 @@ class _HomeState extends State<Home> {
             )),
       ],
     ),
-    StoryModel(
-      // userName: 'Lakhan P.',
-      // userProfile: 'https://devkrest.com/team/lakhan.png',
-      stories: [
-        StoryItem(
-          storyItemType: StoryItemType.image,
-          storyItemSource: StoryItemSource.network,
-          url:
-              "https://minio.daladev.kz/tenant-sandyq/news/01JDKVG6178M4221R7S1RQ3MX6.png",
-          imageConfig: StoryViewImageConfig(
-            fit: BoxFit.cover,
-            progressIndicatorBuilder: (p0, p1, p2) => const Center(
-              child: CupertinoActivityIndicator(),
-            ),
-          ),
-        ),
-        StoryItem(
-          storyItemType: StoryItemType.image,
-          storyItemSource: StoryItemSource.network,
-          url:
-              "https://minio.daladev.kz/tenant-sandyq/news/01JDKVGRD34PX0HR7TVSRFJBE4.png",
-          imageConfig: StoryViewImageConfig(
-            fit: BoxFit.cover,
-            progressIndicatorBuilder: (p0, p1, p2) => const Center(
-              child: CupertinoActivityIndicator(),
-            ),
-          ),
-        ),
-      ],
-    ),
+    // StoryModel(
+    //   // userName: 'Lakhan P.',
+    //   // userProfile: 'https://devkrest.com/team/lakhan.png',
+    //   stories: [
+    //     StoryItem(
+    //       storyItemType: StoryItemType.image,
+    //       storyItemSource: StoryItemSource.network,
+    //       url:
+    //           "https://minio.daladev.kz/tenant-sandyq/news/01JDKVG6178M4221R7S1RQ3MX6.png",
+    //       imageConfig: StoryViewImageConfig(
+    //         fit: BoxFit.cover,
+    //         progressIndicatorBuilder: (p0, p1, p2) => const Center(
+    //           child: CupertinoActivityIndicator(),
+    //         ),
+    //       ),
+    //     ),
+    //     StoryItem(
+    //       storyItemType: StoryItemType.image,
+    //       storyItemSource: StoryItemSource.network,
+    //       url:
+    //           "https://minio.daladev.kz/tenant-sandyq/news/01JDKVGRD34PX0HR7TVSRFJBE4.png",
+    //       imageConfig: StoryViewImageConfig(
+    //         fit: BoxFit.cover,
+    //         progressIndicatorBuilder: (p0, p1, p2) => const Center(
+    //           child: CupertinoActivityIndicator(),
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // ),
   ];
 
   @override
