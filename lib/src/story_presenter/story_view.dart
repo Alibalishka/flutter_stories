@@ -30,7 +30,7 @@ typedef OnSlideDown = void Function(DragUpdateDetails);
 typedef OnSlideStart = void Function(DragStartDetails);
 
 class FlutterStoryPresenter extends StatefulWidget {
-  const FlutterStoryPresenter({
+  FlutterStoryPresenter({
     this.flutterStoryController,
     this.items = const [],
     this.onStoryChanged,
@@ -47,7 +47,9 @@ class FlutterStoryPresenter extends StatefulWidget {
     this.onSlideDown,
     this.onSlideStart,
     super.key,
-  }) : assert(initialIndex < items.length);
+  })  : assert(items.isNotEmpty, 'items must not be empty'),
+        assert(initialIndex >= 0 && initialIndex < items.length,
+            'Invalid initialIndex');
 
   /// List of StoryItem objects to display in the story view.
   final List<StoryItem> items;
@@ -99,7 +101,7 @@ class FlutterStoryPresenter extends StatefulWidget {
 }
 
 class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
-    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   AnimationController? _animationController;
   Animation? _currentProgressAnimation;
   int currentIndex = 0;
@@ -114,6 +116,7 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
 
   @override
   void initState() {
+    super.initState();
     if (_animationController != null) {
       _animationController?.reset();
       _animationController?.dispose();
@@ -125,15 +128,14 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
     );
     currentIndex = widget.initialIndex;
     widget.flutterStoryController?.addListener(_storyControllerListener);
-    _startStoryView();
-
     WidgetsBinding.instance.addObserver(this);
+
     if (currentItem.storyItemType.isImage) {
       CachedNetworkImageProvider(currentItem.url!)
           .resolve(const ImageConfiguration());
     }
 
-    super.initState();
+    _startStoryView();
   }
 
   @override
@@ -208,6 +210,22 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
       setState(() {});
     }
   }
+  // void _startStoryView() {
+  //   if (_animationController != null) {
+  //     _animationController?.reset();
+  //     _animationController?.dispose();
+  //     _animationController = null;
+  //   }
+  //   _animationController = AnimationController(
+  //     vsync: this,
+  //     duration: currentItem.duration,
+  //   );
+  //   widget.onStoryChanged?.call(currentIndex);
+  //   _playMedia();
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  // }
 
   /// Resets the animation controller and its listeners.
   void _resetAnimation() {
@@ -234,6 +252,23 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
     }
   }
 
+  void _disposeAnimation() {
+    _animationController
+      ?..removeListener(animationListener)
+      ..removeStatusListener(animationStatusListener)
+      ..dispose();
+    _animationController = null;
+  }
+
+  void _disposeAudio() {
+    _audioPlayer?.dispose();
+    _audioDurationSubscriptionStream?.cancel();
+    _audioPlayerStateStream?.cancel();
+    _audioDurationSubscriptionStream = null;
+    _audioPlayerStateStream = null;
+    _audioPlayer = null;
+  }
+
   /// Starts the countdown for the story item duration.
   void _startStoryCountdown() {
     _currentVideoPlayer?.addListener(videoListener);
@@ -241,7 +276,11 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
       return;
     }
 
+    // 👇 Очищаем старую анимацию перед созданием новой
+    // _disposeAnimation();
+
     if (currentItem.audioConfig != null) {
+      _disposeAudio();
       _audioPlayer?.durationFuture?.then((v) {
         _totalAudioDuration = v;
         _animationController ??= AnimationController(
@@ -355,6 +394,7 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
 
   /// Plays the next story item.
   void _playNext() async {
+    _disposeAudio();
     if (widget.items.length == 1 &&
         _currentVideoPlayer != null &&
         widget.restartOnCompleted) {
@@ -396,8 +436,9 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
 
   /// Plays the previous story item.
   void _playPrevious() {
+    // _disposeAudio();
     if (_audioPlayer != null) {
-      _audioPlayer?.dispose();
+      // _audioPlayer?.dispose();
       _audioDurationSubscriptionStream?.cancel();
       _audioPlayerStateStream?.cancel();
     }
@@ -491,22 +532,6 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
             ),
           ),
         },
-        // if (currentItem.storyItemType.isWeb) ...{
-        //   Positioned.fill(
-        //     child: WebStoryView(
-        //       storyItem: currentItem,
-        //       key: ValueKey('$currentIndex'),
-        //       onWebViewLoaded: (controller, loaded) {
-        //         isCurrentItemLoaded = loaded;
-        //         if (loaded) {
-        //           _startStoryCountdown();
-        //         }
-        //         currentItem.webConfig?.onWebViewLoaded
-        //             ?.call(controller, loaded);
-        //       },
-        //     ),
-        //   ),
-        // },
         if (currentItem.storyItemType.isText) ...{
           Positioned.fill(
             child: TextStoryView(
