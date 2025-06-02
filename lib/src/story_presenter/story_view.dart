@@ -589,6 +589,55 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
             ),
           ),
         ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            width: size.width * .2,
+            height: size.height,
+            child: GestureDetector(
+              onTap: _playPrevious,
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: SizedBox(
+            width: size.width * .2,
+            height: size.height,
+            child: GestureDetector(
+              onTap: _playNext,
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Container(
+            // color: Colors.amber,
+            width: size.width,
+            height: size.height,
+            child: GestureDetector(
+              key: ValueKey('$currentIndex'),
+              onLongPressDown: (details) {
+                log('onLongPressDown');
+                _pauseMedia();
+              },
+              onLongPressUp: () {
+                // log('onLongPressUp');
+                // _resumeMedia();
+              },
+              onLongPressEnd: (details) {
+                log('onLongPressEnd');
+                _resumeMedia();
+              },
+              onLongPressCancel: () {
+                log('onLongPressCancel');
+                _resumeMedia();
+              },
+              onVerticalDragStart: widget.onSlideStart?.call,
+              onVerticalDragUpdate: widget.onSlideDown?.call,
+            ),
+          ),
+        ),
         // Align(
         //   alignment: Alignment.centerLeft,
         //   child: SizedBox(
@@ -610,71 +659,73 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
         //   ),
         // ),
 
-        Align(
-          alignment: Alignment.centerRight,
-          child: Container(
-            // color: Colors.amber,
-            width: size.width,
-            height: size.height,
-            child: GestureDetector(
-              key: ValueKey('$currentIndex'),
-              behavior: HitTestBehavior.translucent,
-              onTapDown: (details) {
-                final tapX = details.localPosition.dx;
-                final screenWidth = size.width;
+        // Align(
+        //   alignment: Alignment.centerRight,
+        //   child: Container(
+        //     // color: Colors.amber,
+        //     width: size.width,
+        //     height: size.height,
+        //     child: GestureDetector(
+        //       key: ValueKey('$currentIndex'),
+        //       behavior: HitTestBehavior.translucent,
+        //       onTapDown: (details) {
+        //         final tapX = details.localPosition.dx;
+        //         final screenWidth = size.width;
 
-                if (tapX < screenWidth * 0.2) {
-                  _playPrevious();
-                } else if (tapX > screenWidth * 0.8) {
-                  _playNext();
-                }
-              },
-              onLongPressDown: (details) {
-                log('onLongPressDown');
-                _pauseMedia();
-              },
-              onLongPressEnd: (details) {
-                log('onLongPressEnd');
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _resumeMedia();
-                });
-              },
-              onLongPressCancel: () {
-                log('onLongPressCancel');
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _resumeMedia();
-                });
-              },
-              onVerticalDragStart: widget.onSlideStart?.call,
-              onVerticalDragUpdate: widget.onSlideDown?.call,
-              child: SizedBox(
-                width: size.width,
-                height: size.height,
-              ),
-            ),
-            // GestureDetector(
-            //   key: ValueKey('$currentIndex'),
-            //   onLongPressDown: (details) {
-            //     log('onLongPressDown');
-            //     _pauseMedia();
-            //   },
-            //   onLongPressUp: () {
-            //     // log('onLongPressUp');
-            //     // _resumeMedia();
-            //   },
-            //   onLongPressEnd: (details) {
-            //     log('onLongPressEnd');
-            //     _resumeMedia();
-            //   },
-            //   onLongPressCancel: () {
-            //     log('onLongPressCancel');
-            //     _resumeMedia();
-            //   },
-            //   onVerticalDragStart: widget.onSlideStart?.call,
-            //   onVerticalDragUpdate: widget.onSlideDown?.call,
-            // ),
-          ),
-        ),
+        //         if (tapX < screenWidth * 0.2) {
+        //           _playPrevious();
+        //         } else if (tapX > screenWidth * 0.8) {
+        //           _playNext();
+        //         }
+        //       },
+        //       onLongPressDown: (details) {
+        //         log('onLongPressDown');
+        //         _pauseMedia();
+        //       },
+        //       onLongPressEnd: (details) {
+        //         log('onLongPressEnd');
+        //         _resumeMedia();
+        //         // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //         //   _resumeMedia();
+        //         // });
+        //       },
+        //       onLongPressCancel: () {
+        //         log('onLongPressCancel');
+        //         // _resumeMedia();
+        //         WidgetsBinding.instance.addPostFrameCallback((_) {
+        //           _resumeMedia();
+        //         });
+        //       },
+        //       onVerticalDragStart: widget.onSlideStart?.call,
+        //       onVerticalDragUpdate: widget.onSlideDown?.call,
+        //       child: SizedBox(
+        //         width: size.width,
+        //         height: size.height,
+        //       ),
+        //     ),
+        //     // GestureDetector(
+        //     //   key: ValueKey('$currentIndex'),
+        //     //   onLongPressDown: (details) {
+        //     //     log('onLongPressDown');
+        //     //     _pauseMedia();
+        //     //   },
+        //     //   onLongPressUp: () {
+        //     //     // log('onLongPressUp');
+        //     //     // _resumeMedia();
+        //     //   },
+        //     //   onLongPressEnd: (details) {
+        //     //     log('onLongPressEnd');
+        //     //     _resumeMedia();
+        //     //   },
+        //     //   onLongPressCancel: () {
+        //     //     log('onLongPressCancel');
+        //     //     _resumeMedia();
+        //     //   },
+        //     //   onVerticalDragStart: widget.onSlideStart?.call,
+        //     //   onVerticalDragUpdate: widget.onSlideDown?.call,
+        //     // ),
+        //   ),
+        // ),
 
         if (widget.headerWidget != null) ...{
           Align(
