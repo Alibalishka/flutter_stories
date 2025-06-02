@@ -81,6 +81,14 @@ class _HomeState extends State<Home> {
           storyItemSource: StoryItemSource.network,
           url:
               "https://minio.daladev.kz/tenant-sandyq/news/01JJXSFTWMN2WEVBDMW5KVV39F.webp",
+          textConfig: const StoryViewTextConfig(
+              textWidget: Text(
+            'dasfndskfkn dasfndskfkn dasfndskfkn dasfndskfkn dasfndskfkn dasfndskfkn',
+            style: TextStyle(
+              fontSize: 24,
+              color: Colors.black,
+            ),
+          )),
           imageConfig: StoryViewImageConfig(
             fit: BoxFit.cover,
             progressIndicatorBuilder: (p0, p1, p2) => const Center(
