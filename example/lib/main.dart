@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
           videoConfig: StoryViewVideoConfig(
               fit: BoxFit.cover,
               useVideoAspectRatio: false,
-              safeAreaTop: true,
+              // safeAreaTop: true,
               // padding: const EdgeInsets.only(top: 200),
               loadingWidget: Stack(
                 children: [
@@ -95,41 +95,41 @@ class _HomeState extends State<Home> {
             videoConfig: const StoryViewVideoConfig(
               fit: BoxFit.cover,
               useVideoAspectRatio: false,
-              safeAreaTop: true,
+              // safeAreaTop: true,
               loadingWidget: Center(child: CupertinoActivityIndicator()),
             )),
       ],
     ),
-    // StoryModel(
-    //   // userName: 'Lakhan P.',
-    //   // userProfile: 'https://devkrest.com/team/lakhan.png',
-    //   stories: [
-    //     StoryItem(
-    //       storyItemType: StoryItemType.image,
-    //       storyItemSource: StoryItemSource.network,
-    //       url:
-    //           "https://minio.daladev.kz/tenant-sandyq/news/01JDKVG6178M4221R7S1RQ3MX6.png",
-    //       imageConfig: StoryViewImageConfig(
-    //         fit: BoxFit.cover,
-    //         progressIndicatorBuilder: (p0, p1, p2) => const Center(
-    //           child: CupertinoActivityIndicator(),
-    //         ),
-    //       ),
-    //     ),
-    //     StoryItem(
-    //       storyItemType: StoryItemType.image,
-    //       storyItemSource: StoryItemSource.network,
-    //       url:
-    //           "https://minio.daladev.kz/tenant-sandyq/news/01JDKVGRD34PX0HR7TVSRFJBE4.png",
-    //       imageConfig: StoryViewImageConfig(
-    //         fit: BoxFit.cover,
-    //         progressIndicatorBuilder: (p0, p1, p2) => const Center(
-    //           child: CupertinoActivityIndicator(),
-    //         ),
-    //       ),
-    //     ),
-    //   ],
-    // ),
+    StoryModel(
+      // userName: 'Lakhan P.',
+      // userProfile: 'https://devkrest.com/team/lakhan.png',
+      stories: [
+        StoryItem(
+          storyItemType: StoryItemType.image,
+          storyItemSource: StoryItemSource.network,
+          url:
+              "https://minio.daladev.kz/tenant-sandyq/news/01JDKVG6178M4221R7S1RQ3MX6.png",
+          imageConfig: StoryViewImageConfig(
+            fit: BoxFit.cover,
+            progressIndicatorBuilder: (p0, p1, p2) => const Center(
+              child: CupertinoActivityIndicator(),
+            ),
+          ),
+        ),
+        StoryItem(
+          storyItemType: StoryItemType.image,
+          storyItemSource: StoryItemSource.network,
+          url:
+              "https://minio.daladev.kz/tenant-sandyq/news/01JDKVGRD34PX0HR7TVSRFJBE4.png",
+          imageConfig: StoryViewImageConfig(
+            fit: BoxFit.cover,
+            progressIndicatorBuilder: (p0, p1, p2) => const Center(
+              child: CupertinoActivityIndicator(),
+            ),
+          ),
+        ),
+      ],
+    ),
   ];
 
   @override
@@ -148,9 +148,15 @@ class _HomeState extends State<Home> {
         itemBuilder: (context, index) {
           return AnimatedBuilder(
             animation: pageController,
-            child: MyStoryView(
-              storyModel: sampleStory[index],
-              pageController: pageController,
+            child: SafeArea(
+              left: true,
+              right: true,
+              top: false,
+              bottom: false,
+              child: MyStoryView(
+                storyModel: sampleStory[index],
+                pageController: pageController,
+              ),
             ),
             builder: (context, child) {
               if (pageController.position.hasContentDimensions) {
