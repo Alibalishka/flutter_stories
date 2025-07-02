@@ -1,7 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_story_presenter/flutter_story_presenter.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -144,26 +145,54 @@ class _ImageStoryViewState extends State<ImageStoryView> {
     }
 
     /// If the image source is a network URL, use [CachedNetworkImage].
-    return CachedNetworkImage(
-      imageUrl: widget.storyItem.url!,
-      imageBuilder: (context, imageProvider) {
-        // Mark the image as loaded once it is built.
-        markImageAsLoaded();
-        return Image(
-          image: imageProvider,
-          height: imageConfig?.height,
-          fit: imageConfig?.fit,
-          width: imageConfig?.width,
-        );
-      },
-      errorWidget: (context, error, obj) {
-        // Display error widget if provided, otherwise show an empty widget.
-        if (widget.storyItem.errorWidget != null) {
-          return widget.storyItem.errorWidget!;
+    return FutureBuilder<File?>(
+      future: DefaultCacheManager().getSingleFile(widget.storyItem.url!),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          final w = imageConfig?.progressIndicatorBuilder?.call(
+            context,
+            widget.storyItem.url!,
+            const DownloadProgress('', 0, 0),
+          );
+          return w ?? const SizedBox.shrink();
+        } else if (snapshot.hasError || snapshot.data == null) {
+          return widget.storyItem.errorWidget ?? const SizedBox.shrink();
+        } else {
+          final file = snapshot.data!;
+          final bytes = file.readAsBytesSync();
+
+          markImageAsLoaded();
+
+          return Image.memory(
+            bytes,
+            height: imageConfig?.height,
+            fit: imageConfig?.fit,
+            width: imageConfig?.width,
+          );
         }
-        return const SizedBox.shrink();
       },
-      progressIndicatorBuilder: imageConfig?.progressIndicatorBuilder,
     );
+    //   CachedNetworkImage(
+    //     imageUrl: widget.storyItem.url!,
+    //     imageBuilder: (context, imageProvider) {
+    //       // Mark the image as loaded once it is built.
+    //       markImageAsLoaded();
+    //       return Image(
+    //         image: imageProvider,
+    //         height: imageConfig?.height,
+    //         fit: imageConfig?.fit,
+    //         width: imageConfig?.width,
+    //       );
+    //     },
+    //     errorWidget: (context, error, obj) {
+    //       // Display error widget if provided, otherwise show an empty widget.
+    //       if (widget.storyItem.errorWidget != null) {
+    //         return widget.storyItem.errorWidget!;
+    //       }
+    //       return const SizedBox.shrink();
+    //     },
+    //     progressIndicatorBuilder: imageConfig?.progressIndicatorBuilder,
+    //   );
+    // }
   }
 }

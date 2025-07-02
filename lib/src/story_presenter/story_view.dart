@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_story_presenter/src/story_presenter/story_custom_view_wrapper.dart';
 import 'package:just_audio/just_audio.dart';
@@ -130,10 +130,10 @@ class _FlutterStoryPresenterState extends State<FlutterStoryPresenter>
     widget.flutterStoryController?.addListener(_storyControllerListener);
     WidgetsBinding.instance.addObserver(this);
 
-    if (currentItem.storyItemType.isImage) {
-      CachedNetworkImageProvider(currentItem.url!)
-          .resolve(const ImageConfiguration());
-    }
+    // if (currentItem.storyItemType.isImage) {
+    //   CachedNetworkImageProvider(currentItem.url!)
+    //       .resolve(const ImageConfiguration());
+    // }
 
     _startStoryView();
   }
