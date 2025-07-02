@@ -92,6 +92,17 @@ class _ImageStoryViewState extends State<ImageStoryView> {
   }
 
   @override
+  void didUpdateWidget(covariant ImageStoryView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.storyItem.url != oldWidget.storyItem.url &&
+        widget.storyItem.storyItemSource.isNetwork) {
+      _imageFileFuture =
+          DefaultCacheManager().getSingleFile(widget.storyItem.url!);
+      _calledOnImageLoaded = false; // Чтобы снова сработал callback
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final imageConfig = widget.storyItem.imageConfig;
 
