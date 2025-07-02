@@ -35,6 +35,8 @@ class _ImageStoryViewState extends State<ImageStoryView> {
   /// A flag to ensure the [widget.onImageLoaded] callback is called only once.
   bool _calledOnImageLoaded = false;
 
+  late Future<File?> _imageFileFuture;
+
   AudioPlayer audioPlayer = AudioPlayer();
 
   /// Marks the image as loaded and calls the [widget.onImageLoaded] callback if it hasn't been called already.
@@ -70,6 +72,15 @@ class _ImageStoryViewState extends State<ImageStoryView> {
     } catch (e) {
       widget.onImageLoaded?.call(true);
       log("$e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.storyItem.storyItemSource.isNetwork) {
+      _imageFileFuture =
+          DefaultCacheManager().getSingleFile(widget.storyItem.url!);
     }
   }
 
@@ -146,7 +157,7 @@ class _ImageStoryViewState extends State<ImageStoryView> {
 
     /// If the image source is a network URL, use [CachedNetworkImage].
     return FutureBuilder<File?>(
-      future: DefaultCacheManager().getSingleFile(widget.storyItem.url!),
+      future: _imageFileFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           final w = imageConfig?.progressIndicatorBuilder?.call(
