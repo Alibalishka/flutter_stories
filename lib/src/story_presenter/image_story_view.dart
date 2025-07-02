@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 // import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -36,6 +37,7 @@ class _ImageStoryViewState extends State<ImageStoryView> {
   bool _calledOnImageLoaded = false;
 
   late Future<File?> _imageFileFuture;
+  Uint8List? _imageBytes;
 
   AudioPlayer audioPlayer = AudioPlayer();
 
@@ -78,9 +80,22 @@ class _ImageStoryViewState extends State<ImageStoryView> {
   @override
   void initState() {
     super.initState();
+    // if (widget.storyItem.storyItemSource.isNetwork) {
+    //   _imageFileFuture =
+    //       DefaultCacheManager().getSingleFile(widget.storyItem.url!);
+    // }
     if (widget.storyItem.storyItemSource.isNetwork) {
-      _imageFileFuture =
-          DefaultCacheManager().getSingleFile(widget.storyItem.url!);
+      DefaultCacheManager().getSingleFile(widget.storyItem.url!).then((file) {
+        if (!mounted) return;
+        setState(() {
+          _imageBytes = file.readAsBytesSync();
+        });
+        markImageAsLoaded();
+      }).catchError((e) {
+        if (!mounted) return;
+        log("$e");
+        widget.onImageLoaded?.call(true);
+      });
     }
   }
 
@@ -166,34 +181,26 @@ class _ImageStoryViewState extends State<ImageStoryView> {
       );
     }
 
-    /// If the image source is a network URL, use [CachedNetworkImage].
-    return FutureBuilder<File?>(
-      future: _imageFileFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          final w = imageConfig?.progressIndicatorBuilder?.call(
-            context,
-            widget.storyItem.url!,
-            const DownloadProgress('', 0, 0),
-          );
-          return w ?? const SizedBox.shrink();
-        } else if (snapshot.hasError || snapshot.data == null) {
-          return widget.storyItem.errorWidget ?? const SizedBox.shrink();
-        } else {
-          final file = snapshot.data!;
-          final bytes = file.readAsBytesSync();
+    /// If the image source is a network URL, display the image or a progress indicator.
+    if (widget.storyItem.storyItemSource.isNetwork) {
+      if (_imageBytes == null) {
+        final w = imageConfig?.progressIndicatorBuilder?.call(
+          context,
+          widget.storyItem.url!,
+          const DownloadProgress('', 0, 0),
+        );
+        return w ?? const SizedBox.shrink();
+      } else {
+        return Image.memory(
+          _imageBytes!,
+          height: imageConfig?.height,
+          fit: imageConfig?.fit,
+          width: imageConfig?.width,
+        );
+      }
+    }
+    return const SizedBox.shrink();
 
-          markImageAsLoaded();
-
-          return Image.memory(
-            bytes,
-            height: imageConfig?.height,
-            fit: imageConfig?.fit,
-            width: imageConfig?.width,
-          );
-        }
-      },
-    );
     //   CachedNetworkImage(
     //     imageUrl: widget.storyItem.url!,
     //     imageBuilder: (context, imageProvider) {
